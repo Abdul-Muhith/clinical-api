@@ -11,7 +11,7 @@ servers:
   - description: Dev
     url: http://localhost:4000/api/v1
   - description: Prod
-    url: https://clinical-api.onrender.com/v1
+    url: https://clinical-api-jillur-m.onrender.com/api/v1
 tags:
   - name: Health
     description: Health Related Endpoints (public)
