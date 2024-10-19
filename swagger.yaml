@@ -1,0 +1,149 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Clinical API
+  description: This is a RESTful API that efficiently organizes and manages all information and activities related to patients and doctors, improving communication and care.
+  contact:
+    name: Abdul Muhith
+    url: https://portfolio-with-html-css.netlify.app/
+    email: amuhith.mern@outlook.com
+servers:
+  - description: Dev
+    url: http://localhost:4000/api/v1
+  - description: Prod
+    url: https://clinical-api.onrender.com/v1
+tags:
+  - name: Health
+    description: Health Related Endpoints (public)
+paths:
+  /local/health:
+    get:
+      tags: [Health]
+      summary: Health Check
+      description: This endpoint lets you check whether the service is currently operational. It returns a boolean value—true if the service is running smoothly and false if it is not.
+      responses:
+        200:
+          description: Service is up and running
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 200
+                  message:
+                    type: string
+                    description: A human-readable description of the action that occurred.
+                    example: The service is operational and functioning properly.
+                  data:
+                    type: object
+                    properties:
+                      status:
+                        type: string
+                        example: true
+                      uptime:
+                        type: integer
+                        example: 1200  # uptime in seconds
+                      timestamp:
+                        type: string
+                        format: date-time
+                        example: 2024-10-12T12:34:56Z
+        500:
+          $ref: "#/components/responses/500"
+        503:
+          $ref: "#/components/responses/503"
+components:
+  schemas:
+    TraceID:
+      type: string
+      format: uuid
+      description: A unique identifier for the error, useful for tracking and debugging within the system.
+      example: 550e8400-e29b-41d4-a716-446655440000
+    InternalServerError:
+      type: object
+      properties:
+        code:
+          type: string
+          description: A short code representing the type of error.
+        message:
+          type: string
+          description: A detailed message describing the specific error.
+        field:
+          type: string
+          description: The name of the field that caused the error (if applicable).
+        location:
+          type: string
+          enum: [server, null]
+          description: The location of the error within the request (e.g., "server" or "null").
+        status:
+          type: integer
+          format: int32
+          description: An HTTP status code associated with the specific error, usually 500.
+  responses:
+    500:
+      description: Server error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 500
+              message:
+                type: string
+                description: A human-readable description of the error that occurred.
+                example: Internal Server Error
+              errors:
+                type: array
+                description: An array detailing specific errors encountered in the request.
+                items:
+                  $ref: "#/components/schemas/InternalServerError"
+                example:
+                  - code: SERVER_ERROR
+                    message: An unexpected error occurred on the server.
+                    field: null
+                    location: server
+                    status: 500
+              hints:
+                type: string
+                description: Suggestions or tips to help resolve the error.
+                example: We are sorry for the inconvenience. Please try again later or reach out to support for help.
+              trace_id:
+                $ref: "#/components/schemas/TraceID"
+    503:
+      description: Service Unavailable
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 503
+              message:
+                type: string
+                description: A human-readable description of the error that occurred.
+                example:  Service is unavailable
+              errors:
+                type: array
+                description: An array detailing specific errors encountered in the request.
+                items:
+                    $ref: "#/components/schemas/InternalServerError"
+                example:
+                  - code: SERVICE_UNAVAILABLE
+                    message: The service is currently (2024-10-12T12:34:56Z) unavailable.
+                    field: null
+                    location: server
+                    status: 503
+              hints:
+                type: string
+                description: Suggestions or tips to help resolve the error.
+                example: We are sorry for the inconvenience. The service is temporarily down for maintenance. Please try again shortly or reach out to support for help.
+              trace_id:
+                $ref: "#/components/schemas/TraceID"
+
