@@ -15,6 +15,8 @@ servers:
 tags:
   - name: Health
     description: Health Related Endpoints (public)
+  - name: Auth
+    description: Authentication Related Endpoints (public + private)
 paths:
   /local/health:
     get:
@@ -54,13 +56,472 @@ paths:
           $ref: "#/components/responses/500"
         503:
           $ref: "#/components/responses/503"
+  /auth/local/register:
+    post:
+      tags: [Auth]
+      summary: Submit a new request for account registration.
+      description: This endpoint allows users to submit a request for account registration by providing necessary information.
+      requestBody:
+        description: To create a new account, please ensure you provide valid credentials and fill in all required fields, including email, password and confirm password.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 3
+                  maxLength: 20
+                  example: Abdullah
+                phone:
+                  type: string
+                  pattern: ^\+8801[0-9]{8}$
+                  description: Must be in the format (+880 1X-XXXX-XXXX).
+                email:
+                  type: string
+                  format: email
+                  nullable: false
+                  example: abdullah@example.com
+                  description: Must be an unique email address.
+                password:
+                  type: string
+                  minLength: 8
+                  maxLength: 20
+                  nullable: false
+                  pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+{}:\"<>?\\[\\];',.\\/`~])[A-Za-z\\d!@#$%^&*()_+{}:\"<>?\\[\\];',.\\/`~]+$
+                  example: M^f0i?n)w#2A
+                  description: Must include at least one uppercase letter, one lowercase letter, one number and one special character.
+                confirmPassword:
+                  type: string
+                  nullable: false
+                  example: M^f0i?n)w#2A
+                  description: Must match the password.
+              required: [email, password, confirmPassword]
+      responses:
+        201:
+          description: Registration was successful. Welcome aboard!
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: integer
+                        format: int32
+                        example: 201
+                      message:
+                        type: string
+                        description: A human-readable description of the action that occurred.
+                        example: Account request was completed successfully.
+                      data:
+                        allOf:
+                          - type: object
+                          - description: A list of the specific credentials used to create the new account.
+                          - $ref: "#/components/schemas/UserDTO"
+                          - $ref: "#/components/schemas/Timestamp"
+                  - $ref: "#/components/schemas/AccessToken"
+                  - type: object
+                    properties:
+                      links:
+                        type: object
+                        properties:
+                          self:
+                            type: string
+                            example: /api/v1/auth/local/register
+                          login:
+                            type: string
+                            example: /api/v1/auth/local/login
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                    example: Validation Error
+                  errors:
+                    allOf:
+                      - type: array
+                        description: An array detailing specific errors encountered in the request.
+                        items:
+                        $ref: "#/components/schemas/BadRequestError"
+                      - $ref: "#/components/schemas/RegistrationErrorResponse"
+                  hints:
+                    type: string
+                    description: Suggestions or tips to help resolve the error.
+                    example: Please, ensure all fields are correctly filled and try again. If the issue persists, feel free to contact our technical support.
+                  trace_id:
+                    $ref: "#/components/schemas/TraceID"
+        500:
+          $ref: "#/components/responses/500"
+        503:
+          $ref: "#/components/responses/503"
+  /auth/local/login:
+    post:
+      tags: [Auth]
+      summary: Log in to an existing account.
+      description: This endpoint allows users to log in to their account and obtain an authentication token by providing necessary information.
+      requestBody:
+        description: To log in, please ensure you provide valid credentials, including email address and password.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  nullable: false
+                  example: abdullah@example.com
+                  description: Must be a valid email address.
+                password:
+                  type: string
+                  nullable: false
+                  example: M^f0i?n)w#2A
+                  description: Must be associated with the account.
+              required: [email, password]
+      responses:
+        200:
+          description: Log in was successful. Welcome aboard!
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: integer
+                        format: int32
+                        example: 200
+                      message:
+                        type: string
+                        description: A human-readable description of the action that occurred.
+                        example: Log in was completed successfully.
+                      data:
+                        allOf:
+                          - type: object
+                          - description: A detailed list of the specific credentials may be utilized for authentication purposes and for generating authorization token.
+                          - $ref: "#/components/schemas/UserDTO"
+                  - $ref: "#/components/schemas/AccessToken"
+                  - type: object
+                    properties:
+                      links:
+                        type: object
+                        properties:
+                          self:
+                            type: string
+                            example: /api/v1/auth/local/login
+                          register:
+                            type: string
+                            example: /api/v1/auth/local/register
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                    example: Validation Error
+                  errors:
+                    allOf:
+                      - type: array
+                        description: An array detailing specific errors encountered in the request.
+                        items:
+                          $ref: "#/components/schemas/BadRequestError"
+                      - $ref: "#/components/schemas/LoginErrorResponse"
+                  hints:
+                    type: string
+                    description: Suggestions or tips to help resolve the error.
+                    example: Please, ensure all fields are correctly filled and try again. If the issue persists, feel free to contact our technical support.
+                  trace_id:
+                    $ref: "#/components/schemas/TraceID"
+        404:
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 404
+                  message:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                    example: Invalid Credentials
+                  errors:
+                    allOf:
+                      - type: array
+                        description: An array detailing specific errors encountered in the request.
+                        items:
+                          $ref: "#/components/schemas/NotFoundError"
+                      - example:
+                        - code: ACCOUNT_NOT_FOUND
+                          message: The account you are looking for could not be found.
+                          field: email
+                          location: body
+                          status: 404
+                        - code: NOT_FOUND
+                          message: The account does not exist based on the provided details.
+                          field: email or password
+                          location: body
+                          status: 404
+                  hints:
+                    type: string
+                    description: Suggestions or tips to help resolve the error.
+                    example: Please, ensure all fields are correctly filled and try again. If you continue to have issues, please reach out to our support team.
+                  trace_id:
+                    $ref: "#/components/schemas/TraceID"
+        500:
+          $ref: "#/components/responses/500"
+        503:
+          $ref: "#/components/responses/503"
+  /auth/verification/account-verification:
+    get:
+      operationId: verifyAccount
+      security:
+        - bearerAuth: []
+      tags: [Auth]
+      summary: Verify the exiting account by assigning their roles.
+      description: This endpoint allows an authenticated user to verify other accounts and assign roles through a unique user ID.
+      parameters:
+        - $ref: "#/components/parameters/idPathParam"
+      requestBody:
+        description: To verify additional accounts, please ensure you provide valid credentials, including role and status.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  nullable: false
+                  enum: [user, nurse, doctor, administrator]
+                  example: user
+                status:
+                  type: string
+                  nullable: false
+                  enum: [active, disabled, request changed, pending]
+                  example: active
+              required: [role, status]
+      responses:
+        200:
+          description: Account verification was successful.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: integer
+                        format: int32
+                        example: 200
+                      message:
+                        type: string
+                        description: A human-readable description of the action that occurred.
+                        example: The account has been verified successfully.
+                      data:
+                        allOf:
+                          - type: object
+                          - description: A detailed list of the specific credentials may be utilized for authentication purposes and for generating authorization token.
+                          - $ref: "#/components/schemas/UserDTO"
+                          - $ref: "#/components/schemas/Timestamp"
+                  - $ref: "#/components/schemas/AccessToken"
+                  - type: object
+                    properties:
+                      links:
+                        type: object
+                        properties:
+                          self:
+                            type: string
+                            example: /api/v1/auth/verification/account-verification/60d21b4667d0d8992e610c88
+                          login:
+                            type: string
+                            example: /api/v1/auth/local/login
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                    example: Validation Error
+                  errors:
+                    allOf:
+                      - type: array
+                        description: An array detailing specific errors encountered in the request.
+                        items:
+                          $ref: "#/components/schemas/BadRequestError"
+                      - $ref: "#/components/schemas/AccountVerificationErrorResponse"
+                  hints:
+                    type: string
+                    description: Suggestions or tips to help resolve the error.
+                    example: Please, ensure all fields are correctly filled and try again. If the issue persists, feel free to contact our technical support.
+                  trace_id:
+                    $ref: "#/components/schemas/TraceID"
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+        404:
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 404
+                  message:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                    example: Invalid Credentials
+                  errors:
+                    allOf:
+                      - type: array
+                        description: An array detailing specific errors encountered in the request.
+                        items:
+                          $ref: "#/components/schemas/NotFoundError"
+                      - example:
+                        - code: ACCOUNT_NOT_FOUND
+                          message: The account you are looking for could not be found.
+                          field: memberId
+                          location: path
+                          status: 404
+                  hints:
+                    type: string
+                    description: Suggestions or tips to help resolve the error.
+                    example: Please, ensure all fields are correctly filled and try again. If you continue to have issues, please reach out to our support team.
+                  trace_id:
+                    $ref: "#/components/schemas/TraceID"
+        500:
+          $ref: "#/components/responses/500"
+        503:
+          $ref: "#/components/responses/503"
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
+    Timestamp:
+      type: object
+      properties:
+        created_at:
+          type: string
+          format: date-time
+          example: 2024-09-21T12:34:56Z
+        updated_at:
+          type: string
+          format: date-time
+          example: 2024-09-21T12:34:56Z
+    UserDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              description: Must be MongoDB Object Id
+              example: 60d21b4667d0d8992e610c88
+            username:
+              type: string
+              example: Abdullah
+            phone:
+              type: string
+              example: "+8801596528545"
+            email:
+              type: string
+              format: email
+              example: abdullah@example.com
+            role:
+              type: string
+              enum: [user, nurse, doctor, administrator]
+              example: "user"
+            status:
+              type: string
+              enum: [active, disabled, request changed, pending]
+              example: pending
+    AccessToken:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+        expires_in:
+          type: integer
+          example: 3600
     TraceID:
       type: string
       format: uuid
       description: A unique identifier for the error, useful for tracking and debugging within the system.
       example: 550e8400-e29b-41d4-a716-446655440000
+    BadRequestError:
+      type: object
+      properties:
+        code:
+          type: string
+          description: A short code representing the type of error.
+        message:
+          type: string
+          description: A detailed message describing the specific error.
+        field:
+          type: string
+          description: The name of the field that caused the error (if applicable).
+        location:
+          type: string
+          enum: [body, query, path, null]
+          description: The location of the error within the request (e.g., "body" or "query").
+        status:
+          type: integer
+          format: int32
+          description: An HTTP status code associated with the specific error, usually 400.
+    NotFoundError:
+      type: object
+      properties:
+        code:
+          type: string
+          description: A short code representing the type of error.
+        message:
+          type: string
+          description: A detailed message describing the specific error.
+        field:
+          type: string
+          description: The name of the field that caused the error (if applicable).
+        location:
+          type: string
+          enum: [body, query, path, null]
+          description: The location of the error within the request (e.g., "body" or "query").
+        status:
+          type: integer
+          format: int32
+          description: An HTTP status code associated with the specific error, usually 404.
     InternalServerError:
       type: object
       properties:
@@ -81,7 +542,210 @@ components:
           type: integer
           format: int32
           description: An HTTP status code associated with the specific error, usually 500.
+    RegistrationErrorResponse:
+      example:
+      - code: MISSING_EMAIL
+        message: The email address is required.
+        field: email
+        location: body
+        status: 400
+      - code: MISSING_INPUT
+        message: Either a password or a confirm password is required.
+        field: password or confirm_password
+        location: body
+        status: 400
+      - code: INVALID_USERNAME
+        message: The username must be between 3 and 20 characters.
+        field: username
+        location: body
+        status: 400
+      - code: INVALID_MOBILE
+        message: The mobile number provided is invalid.
+        field: phone
+        location: body
+        status: 400
+      - code: "INVALID_EMAIL"
+        message: The email format is invalid.
+        field: email
+        location: body
+        status: 400
+      - code: INVALID_INPUT
+        message: One or more input fields are invalid.
+        field: null
+        location: body
+        status: 400
+      - code: EMAIL_TAKEN
+        message: The email address is already registered.
+        field: email
+        location: body
+        status: 400
+    AccountVerificationErrorResponse:
+      example:
+        - code: MISSING_ID
+          message: The member id is required.
+          field: memberId
+          location: path
+          status: 400
+        - code: MISSING_INPUT
+          message: Either a role or a status is required.
+          field: role or status
+          location: body
+          status: 400
+        - code: INVALID_ID
+          message: The member id provided is invalid.
+          field: memberId
+          location: path
+          status: 400
+        - code: INVALID_ROLE
+          message: The role provided is invalid.
+          field: role
+          location: body
+          status: 400
+        - code: INVALID_STATUS
+          message: The status provided is invalid.
+          field: status
+          location: body
+          status: 400
+        - code: INVALID_INPUT
+          message: One or more input fields are invalid.
+          field: role and status
+          location: body
+          status: 400
+    LoginErrorResponse:
+      example:
+      - code: MISSING_INPUT
+        message: Either an email address or a password is required.
+        field: email or password
+        location: body
+        status: 400
+      - code: "INVALID_EMAIL"
+        message: The email address is invalid.
+        field: email
+        location: body
+        status: 400
+      - code: INVALID_PASSWORD
+        message: The password provided is invalid.
+        field: password
+        location: body
+        status: 400
+      - code: INVALID_INPUT
+        message: One or more input fields are invalid.
+        field: null
+        location: body
+        status: 400
   responses:
+    401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 401
+              message:
+                type: string
+                description: A human-readable description of the error that occurred.
+                example: UNAUTHORIZED! to continue, Please log in to your account using your credentials.
+              errors:
+                allOf:
+                  - type: array
+                    description: An array detailing specific errors encountered in the request.
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: A short code representing the type of error.
+                        message:
+                          type: string
+                          description: A detailed message describing the specific error.
+                        field:
+                          type: string
+                          description: The name of the field that caused the error (if applicable).
+                        location:
+                          type: string
+                          enum: [header, null]
+                          description: The location of the error within the request (e.g., "header" or "null").
+                        status:
+                          type: integer
+                          format: int32
+                          description: An HTTP status code associated with the specific error, usually 401.
+                  - example:
+                    - code: MISSING_TOKEN
+                      message: The authentication token is required.
+                      field: accessToken
+                      location: header
+                      status: 401
+                    - code: INVALID_TOKEN
+                      message: The authentication token provided is invalid.
+                      field: accessToken
+                      location: header
+                      status: 401
+                    - code: TOKEN_EXPIRED
+                      message: The authentication token has expired.
+                      field: accessToken
+                      location: header
+                      status: 401
+              hints:
+                type: string
+                description: Suggestions or tips to help resolve the error.
+                example: Please, send the access token in the header as a Bearer Token and try again. If you continue to have issues, please reach out to our support team.
+              trace_id:
+                $ref: "#/components/schemas/TraceID"
+    403:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              code:
+                type: integer
+                format: int32
+                example: 403
+              message:
+                type: string
+                description: A human-readable description of the error that occurred.
+                example: You do not have the required permissions to perform this action.
+              errors:
+                allOf:
+                  - type: array
+                    description: An array detailing specific errors encountered in the request.
+                    items:
+                      type: object
+                      properties:
+                        code:
+                          type: string
+                          description: A short code representing the type of error.
+                        message:
+                          type: string
+                          description: A detailed message describing the specific error.
+                        field:
+                          type: string
+                          description: The name of the field that caused the error (if applicable).
+                        location:
+                          type: string
+                          enum: [header, null]
+                          description: The location of the error within the request (e.g., "header" or "null").
+                        status:
+                          type: integer
+                          format: int32
+                          description: An HTTP status code associated with the specific error, usually 403.
+                  - example:
+                    - code: FORBIDDEN
+                      message: The account you are looking for lacks the necessary rights to access this resource.
+                      field: accessToken
+                      location: header
+                      status: 403
+              hints:
+                type: string
+                description: Suggestions or tips to help resolve the error.
+                example: Please, send the access token in the header as a Bearer Token and try again. If you continue to have issues, please reach out to our support team.
+              trace_id:
+                $ref: "#/components/schemas/TraceID"
     500:
       description: Server error
       content:
@@ -146,4 +810,12 @@ components:
                 example: We are sorry for the inconvenience. The service is temporarily down for maintenance. Please try again shortly or reach out to support for help.
               trace_id:
                 $ref: "#/components/schemas/TraceID"
-
+  parameters:
+    idPathParam:
+      name: id
+      in: path
+      required: true
+      description: The unique identifier must be a valid Object ID that is associated with the resource.
+      schema:
+        type: string
+        example: 66c0771e9aced6fee1c93b5e
