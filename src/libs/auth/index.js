@@ -1,3 +1,7 @@
 import signup from "./signup.js";
+import signin from "./signin.js";
 
-export default { signup };
+export default {
+  signup,
+  signin,
+};
