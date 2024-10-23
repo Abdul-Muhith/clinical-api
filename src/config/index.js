@@ -20,6 +20,15 @@ const config = {
     methods: process.env.CORS_METHODS,
     preflightContinue: process.env.CORS_PREFLIGHT_CONTINUE === "true",
   },
+  jwtSecret: process.env.JWT_SECRET,
+  jwtLifetime: process.env.JWT_LIFE_TIME,
+  jwtAlgorithm: process.env.JWT_ALGORITHM,
+  accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
+  refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
+  accessTokenLifetime: process.env.ACCESS_TOKEN_LIFETIME,
+  refreshTOkenLifetime: process.env.REFRESH_TOKEN_LIFETIME,
 };
+
+Object.freeze(config); // avoid to update any existing config
 
 export default config;

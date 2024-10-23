@@ -14,7 +14,7 @@ const memberSchema = new Schema(
       unique: true,
       validate: {
         validator: function (v) {
-          return /^\+8801[0-9]{8}$/.test(v);
+          return /^\+8801[0-9]{9}$/.test(v);
         },
         message: (props) => `${props.value} is not a valid phone number!`,
       },
@@ -28,14 +28,20 @@ const memberSchema = new Schema(
     password: {
       type: String,
       required: true,
-      minlength: 8,
-      maxLength: 20,
+      minlength: [8, `The password must be at least 3 characters long.`],
+      maxLength: [100, `The password must not exceed 100 characters.`],
       validate: {
         validator: function (v) {
           return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+{}:"<>?\[\];',.\/`~])[A-Za-z\d!@#$%^&*()_+{}:"<>?\[\];',.\/`~]+$/.test(
             v
           );
         },
+
+        // validator: function (v) {
+        //   return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+{}:"<>?[\];',.\/`~])[A-Za-z\d!@#$%^&*()_+{}:"<>?[\];',.\/`~]+$/.test(
+        //     v
+        //   );
+        // },
         message:
           "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.",
       },
@@ -51,6 +57,14 @@ const memberSchema = new Schema(
       required: true,
       enum: ["active", "disabled", "request changed", "pending"],
       default: "pending",
+    },
+    token: {
+      type: String,
+      require: false,
+    },
+    issuedIp: {
+      type: String,
+      require: false,
     },
   },
   {

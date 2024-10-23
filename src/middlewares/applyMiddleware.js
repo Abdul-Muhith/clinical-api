@@ -14,7 +14,7 @@ const applyMiddleware = (app) => {
   app.use("/docs/v1", swaggerUI.serve, swaggerUI.setup(swaggerDoc));
 
   // → → → Error handling using the Express Open API Validator → → →
-  app.use(OpenApiValidator.middleware({ apiSpec: "./swagger.yaml" }));
+  // app.use(OpenApiValidator.middleware({ apiSpec: "./swagger.yaml" }));
 };
 
 export default applyMiddleware;
