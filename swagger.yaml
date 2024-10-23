@@ -75,8 +75,8 @@ paths:
                   example: Abdullah
                 phone:
                   type: string
-                  pattern: ^\+8801[0-9]{8}$
-                  description: Must be in the format (+880 1X-XXXX-XXXX).
+                  pattern: ^\+8801[0-9]{9}$
+                  description: Must be in the format (+880 1X-XXXX-XXXX) and 13 characters in length.
                 email:
                   type: string
                   format: email
@@ -86,9 +86,9 @@ paths:
                 password:
                   type: string
                   minLength: 8
-                  maxLength: 20
+                  maxLength: 100
                   nullable: false
-                  pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+{}:\"<>?\\[\\];',.\\/`~])[A-Za-z\\d!@#$%^&*()_+{}:\"<>?\\[\\];',.\\/`~]+$
+                  # pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+{}:\"<>?\\[\\];',.\\/`~])[A-Za-z\\d!@#$%^&*()_+{}:\"<>?\\[\\];',.\\/`~]+$
                   example: M^f0i?n)w#2A
                   description: Must include at least one uppercase letter, one lowercase letter, one number and one special character.
                 confirmPassword:
