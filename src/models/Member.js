@@ -73,6 +73,15 @@ const memberSchema = new Schema(
   }
 );
 
+// Create a partial index for unique phone numbers (only when phone is not null)
+memberSchema.index(
+  { phone: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { phone: { $exists: true, $ne: null } },
+  }
+);
+
 const Member = model("Member", memberSchema);
 
 export default Member;
