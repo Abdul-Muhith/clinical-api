@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post("/local/register", authController.signup);
 router.post("/local/login", authController.signin);
+router.get("/logout", authController.logout);
 router.post(
   "/verification/account-verification/:id",
   authenticate,
