@@ -292,8 +292,8 @@ paths:
           $ref: "#/components/responses/500"
         503:
           $ref: "#/components/responses/503"
-  /auth/verification/account-verification:
-    get:
+  /auth/verification/account-verification/{id}:
+    post:
       operationId: verifyAccount
       security:
         - bearerAuth: []
@@ -319,7 +319,7 @@ paths:
                   nullable: false
                   enum: [active, disabled, request changed, pending]
                   example: active
-              required: [role, status]
+              required: [status]
       responses:
         200:
           description: Account verification was successful.
@@ -401,7 +401,7 @@ paths:
                   message:
                     type: string
                     description: A human-readable description of the error that occurred.
-                    example: Invalid Credentials
+                    example: No data found based on the provided credentials
                   errors:
                     allOf:
                       - type: array

@@ -113,6 +113,31 @@ const unAuthenticatedError = (message, errors, hints) => {
   });
 };
 
+const forbiddenError = (message, errors, hints) => {
+  const traceId = uuidv4(); // Generate a unique trace_id for every error
+
+  return format({
+    code: 403,
+    message:
+      message && message.trim() !== ``
+        ? message
+        : `You do not have the required permissions to perform this action.`,
+    errors: errors ?? [
+      {
+        code: `FORBIDDEN`,
+        message: `The authorization token is required.`,
+        field: `access_token`,
+        location: `header`,
+        status: 403,
+      },
+    ],
+    hints:
+      hints ??
+      `Please, send the access token in the header as a Bearer Token and try again.`,
+    trace_id: traceId,
+  });
+};
+
 const badRequest = (message, errors, hints) => {
   const traceId = uuidv4(); // Generate a unique trace_id for every error
 
@@ -130,6 +155,29 @@ const badRequest = (message, errors, hints) => {
     ],
     hints:
       hints ?? `Please, ensure all fields are correctly filled and try again.`,
+    trace_id: traceId,
+  });
+};
+
+const notFound = (message, errors, hints) => {
+  const traceId = uuidv4(); // Generate a unique trace_id for every error
+
+  return format({
+    code: 404,
+    message:
+      message && message.trim() !== ``
+        ? message
+        : `No data found based on the provided credentials.`,
+    errors: errors ?? [
+      {
+        code: `NOT_FOUND`,
+        message: `The item you are looking for could not be found.`,
+        field: null,
+        location: null,
+        status: 404,
+      },
+    ],
+    hints: hints ?? `Please, verify the requested resource and try again.`,
     trace_id: traceId,
   });
 };
@@ -159,6 +207,8 @@ const serverError = (message, errors, hints) => {
 export default {
   format,
   unAuthenticatedError,
+  forbiddenError,
   badRequest,
+  notFound,
   serverError,
 };

@@ -1,9 +1,12 @@
 import dotenv from "dotenv";
 
+import auth from "./auth.js";
+
 // Load environment variables from .env file
 dotenv.config();
 
 const config = {
+  auth,
   port: process.env.SERVER_PORT || 4000,
   type: process.env.TYPE,
   devDbConnectionUrl: process.env.DB_TEST_MONGO_URI,
@@ -25,8 +28,8 @@ const config = {
   jwtAlgorithm: process.env.JWT_ALGORITHM,
   accessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
   refreshTokenSecret: process.env.REFRESH_TOKEN_SECRET,
-  accessTokenLifetime: process.env.ACCESS_TOKEN_LIFETIME,
-  refreshTOkenLifetime: process.env.REFRESH_TOKEN_LIFETIME,
+  accessTokenLifetime: process.env.ACCESS_TOKEN_LIFE_TIME,
+  refreshTokenLifetime: process.env.REFRESH_TOKEN_LIFE_TIME,
 };
 
 Object.freeze(config); // avoid to update any existing config

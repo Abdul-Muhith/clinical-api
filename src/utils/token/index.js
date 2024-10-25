@@ -66,7 +66,7 @@ const decodeJWT = (token, algorithm = config.jwtAlgorithm) => {
 const verifyJWT = (
   token,
   privateKey = config.jwtSecret,
-  algorithm = config.jwtSecret
+  algorithm = config.jwtAlgorithm
 ) => {
   // We will verify the token within a try-catch block to handle any verifying errors gracefully and provide a user-friendly error message instead.
 
