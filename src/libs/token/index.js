@@ -6,7 +6,7 @@ import customError from "../../utils/error.js";
 const generateRefreshToken = (
   payload = {},
   privateKey = config.refreshTokenSecret,
-  expiresIn = config.refreshTOkenLifetime
+  expiresIn = config.refreshTokenLifetime
 ) => {
   try {
     return tokenUtils.generateJWT(payload, privateKey, expiresIn);
@@ -28,7 +28,27 @@ const generateAccessToken = (
   }
 };
 
+// ### → -> -> Verify Access Token <- <- <-
+const verifyAccessToken = (token, privateKey = config.accessTokenSecret) => {
+  // We will verify the access token within a try-catch block to handle any verifying errors gracefully and provide a user-friendly error message instead.
+
+  try {
+    return tokenUtils.verifyJWT(token, privateKey);
+  } catch (err) {
+    throw customError.unAuthenticatedError(``, [
+      {
+        code: "FAILED_VERIFY",
+        message: `Failed to verify the provided access token`,
+        field: "accessToken",
+        location: "header",
+        status: 401,
+      },
+    ]);
+  }
+};
+
 export default {
   generateRefreshToken,
   generateAccessToken,
+  verifyAccessToken,
 };

@@ -1,5 +1,3 @@
-import ip from "ip";
-
 import authService from "../../../../libs/auth/index.js";
 import memberValidate from "../../../../libs/member/validation.js";
 import memberService from "../../../../libs/member/index.js";
@@ -32,10 +30,7 @@ const signup = async (req, res, next) => {
     // ### → -> -> Generate necessary responses <- <- <-
     const memberDTO = memberService.getDTO(member);
 
-    const token = tokenService.generateAccessToken({
-      ...memberDTO,
-      issuedIp: ip.address(),
-    });
+    const token = tokenService.generateAccessToken(memberDTO);
 
     return res.status(201).json({
       code: 201,

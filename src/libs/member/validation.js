@@ -1,13 +1,14 @@
 import customError from "../../utils/error.js";
 import memberUtils from "./utils.js";
 import validationUtils from "../../utils/validation/index.js";
+import authConfig from "../../config/auth.js";
 
 // Initialize an empty array to store errors
 let errors = [];
 
-const throwError = (message, hints) => {
-  if (errors.length > 0) {
-    const error = customError.badRequest(message ?? ``, errors, hints);
+const throwError = (message, hints, array) => {
+  if (errors.length > 0 || (array && array.length > 0)) {
+    const error = customError.badRequest(message ?? ``, array ?? errors, hints);
 
     errors = []; // Reset errors to ensure it starts fresh for the next invocation.
 
@@ -18,7 +19,9 @@ const throwError = (message, hints) => {
 // Required fields validation
 const requiredFields = (fields = {}) => {
   const missingFields = Object.entries(fields).filter(
-    ([key, value]) => !value || value.trim() == ``
+    ([key, value]) =>
+      // Check if null, undefined, empty object, empty array or empty string
+      !value || Object.keys(value).length === 0 || value.trim() == ``
   );
 
   if (missingFields.length) {
@@ -35,6 +38,7 @@ const requiredFields = (fields = {}) => {
       message: `One or more input fields are required.`,
       field: formattedNames,
       location: "body",
+      status: 400,
     });
   }
 };
@@ -53,6 +57,7 @@ const username = (username) => {
       message: `The username must be between 3 and 20 characters.`,
       field: `username`,
       location: `bodY`,
+      status: 400,
     });
   }
 };
@@ -69,6 +74,7 @@ const phone = (phone) => {
       message: `The mobile number format is invalid.`,
       field: `phone`,
       location: `bodY`,
+      status: 400,
     });
   }
 };
@@ -84,6 +90,7 @@ const phoneExists = async (phone) => {
         message: `The phone number is already registered.`,
         field: `phone`,
         location: `bodY`,
+        status: 400,
       });
     }
   }
@@ -117,6 +124,7 @@ const emailExists = async (email) => {
         message: `The email address is already registered.`,
         field: `email`,
         location: `bodY`,
+        status: 400,
       });
     }
   }
@@ -132,6 +140,7 @@ const password = (password) => {
       message: `The password must be between 8 and 20 characters.`,
       field: `password`,
       location: `bodY`,
+      status: 400,
     });
   }
 
@@ -145,6 +154,7 @@ const password = (password) => {
       message: `The password must contain at least one uppercase letter, one lowercase letter, one number and one special character.`,
       field: `password`,
       location: `bodY`,
+      status: 400,
     });
   }
 };
@@ -157,6 +167,45 @@ const passwordMatches = (confirmPassword, password) => {
       message: "The password confirmation does not match.",
       field: "confirmation_password",
       location: "body",
+      status: 400,
+    });
+  }
+};
+
+// Role validation
+const role = (role) => {
+  validationUtils.stringError(role, `role`, ``, errors, throwError);
+
+  if (
+    role &&
+    !authConfig.allowedRoles.find((v) => v.toLowerCase() === role.toLowerCase())
+  ) {
+    errors.push({
+      code: `INVALID_ROLE`,
+      message: `The role provided is invalid.`,
+      field: `role`,
+      location: `bodY`,
+      status: 400,
+    });
+  }
+};
+
+// Account status validation
+const status = (status) => {
+  validationUtils.stringError(status, `status`, ``, errors, throwError);
+
+  if (
+    status &&
+    !authConfig.allowedStatuses.find(
+      (v) => v.toLowerCase() === status.toLowerCase()
+    )
+  ) {
+    errors.push({
+      code: `INVALID_STATUS`,
+      message: `The status provided is invalid.`,
+      field: `status`,
+      location: `bodY`,
+      status: 400,
     });
   }
 };
@@ -171,4 +220,6 @@ export default {
   phoneExists,
   password,
   passwordMatches,
+  role,
+  status,
 };
