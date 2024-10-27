@@ -58,7 +58,7 @@ const authenticate = async (req, _res, next) => {
     );
 
     // ### → -> -> Confirm whether their issued IP matches the current IP <- <- <-
-    if (!member || member?.issuedIp !== ip.address()) {
+    if (!member || (member?.issuedIp && member?.issuedIp !== ip.address())) {
       throw customError.forbiddenError(``, [
         {
           code: "INVALID_IP_ADDRESS",

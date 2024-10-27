@@ -4,9 +4,9 @@ const memberSchema = new Schema(
   {
     username: {
       type: String,
+      required: false,
       minLength: [3, `The username must be at least 3 characters long.`],
       maxLength: [20, `The username must not exceed 20 characters.`],
-      required: false,
     },
     phone: {
       type: String,
@@ -27,7 +27,7 @@ const memberSchema = new Schema(
     },
     password: {
       type: String,
-      required: true,
+      required: false,
       minlength: [8, `The password must be at least 3 characters long.`],
       maxLength: [100, `The password must not exceed 100 characters.`],
       validate: {
@@ -36,12 +36,6 @@ const memberSchema = new Schema(
             v
           );
         },
-
-        // validator: function (v) {
-        //   return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+{}:"<>?[\];',.\/`~])[A-Za-z\d!@#$%^&*()_+{}:"<>?[\];',.\/`~]+$/.test(
-        //     v
-        //   );
-        // },
         message:
           "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character.",
       },
