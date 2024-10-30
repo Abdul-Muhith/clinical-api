@@ -608,13 +608,13 @@ paths:
                   type: array
                   items:
                     type: string
-                    example: Cardiology, Dermatology
+                  example: [Cardiology, Dermatology]
                   description: Represents the doctor's specific area of expertise.
                 conditions:
                   type: array
                   items:
                     type: string
-                    example: Diabetes, Hypertension, Asthma
+                  example: [Diabetes, Hypertension, Asthma]
                   description: Represents a list of medical conditions that the doctor could diagnose or treat.
                 availability:
                   type: array
