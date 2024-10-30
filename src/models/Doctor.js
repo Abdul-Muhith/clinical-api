@@ -27,14 +27,15 @@ const doctorSchema = new Schema(
           day: {
             type: String,
             required: true,
+            lowercase: true,
             enum: [
-              "Saturday",
-              "Sunday",
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
+              "saturday",
+              "sunday",
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
             ],
           },
           startTime: {
