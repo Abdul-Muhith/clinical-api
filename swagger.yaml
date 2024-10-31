@@ -428,7 +428,7 @@ paths:
           $ref: "#/components/responses/500"
         503:
           $ref: "#/components/responses/503"
-  /users/local:
+  /members/local:
     get:
       operationId: retrieveAllMembers
       tags: [Member]
@@ -1283,7 +1283,7 @@ components:
       name: page
       in: query
       required: false
-      description: The page number to retrieve when results are paginated in conjunction with the `size` parameter. If not specified, the default value is `1` to get the first page of results.
+      description: The page number to retrieve when results are paginated in conjunction with the `size` parameter. If not specified, the default will be the first page of results.
       schema:
         type: integer
         format: int32
@@ -1293,7 +1293,7 @@ components:
       name: size
       in: query
       required: false
-      description: The number of items to return per page in conjunction with the `page` parameter. If not specified, the default value is `25` and the maximum allowed value is `100` to retrieve items per page.
+      description: The number of items to retrieve per page, used in conjunction with the `page` parameter. If not specified, the default is `25` items per page, with a maximum allowed value of `100`.
       schema:
         type: integer
         format: int32
@@ -1318,7 +1318,7 @@ components:
       name: sort_order
       in: query
       required: false
-      description: This is used in conjunction with the `sort_by` parameter for specifying whether the sort is ascending or descending. The default value is `ascending` to sort the results in ascending order.
+      description: This is used in conjunction with the `sort_by` parameter for specifying whether the sort is ascending or descending. If not provided, results will default to ascending order.
       schema:
         type: string
         enum: [ascending, descending]
@@ -1327,7 +1327,7 @@ components:
       name: filter
       in: query
       required: false
-      description: A comma-separated list of expressions used to narrow down the results based on specific criteria. Typically, each filter expression follows a key-value format. The default value is an empty string (`""`).
+      description: A comma-separated list of expressions used to narrow down the results based on specific criteria, where each filter expression is formatted as a key-value pair. If not provided, the results will default to include all available data without any filtering.
       schema:
         type: string
         format: key-value
@@ -1336,7 +1336,7 @@ components:
       name: search
       in: query
       required: false
-      description: This is a field-specific search that follows a key-value format to find resources by matching against their attributes. The default value is an empty string (`""`) that ensure no related resource will be searched in the response.
+      description: This is a field-specific search that follows a key-value format to find resources by matching against their attributes. If not provided, the default setting will ensure that no related resources are included in the search results.
       schema:
         type: string
         format: key-value
@@ -1345,7 +1345,7 @@ components:
       name: search_term
       in: query
       required: false
-      description: This is a free-text searching by providing a keyword to search for matches in all relevant fields. The default value is an empty string (`""`) that ensure no related resource will be searched in the response.
+      description: This is a free-text searching by providing a keyword to search for matches in all relevant fields. If not provided, the default setting will ensure that no related resources are included in the search results.
       schema:
         type: string
         default: ""
@@ -1353,7 +1353,7 @@ components:
       name: expand
       in: query
       required: false
-      description: A comma-separated list of fields for expansion where each field may specifies additional fields to include in the response with further specification. If not specified, all related resource fields will be expanded. Typically, results will default based on use case.
+      description: A comma-separated list of fields for expansion where each field may specifies additional fields to include in the result. If not specified, all related resource fields will be expanded. Typically, results will default based on use case.
       schema:
         type: string
         default: ""
@@ -1361,7 +1361,7 @@ components:
       name: select
       in: query
       required: false
-      description: A comma-separated list of fields should be used to specify additional fields for use in the `select` method to include in the response. If not provided, results will default based on use case.
+      description: A comma-separated list of fields that specifies additional fields to include in the result. If not provided, results will default based on use case.
       schema:
         type: string
         default: ""
