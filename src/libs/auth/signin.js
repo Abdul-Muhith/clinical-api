@@ -1,5 +1,5 @@
 import memberValidate from "../member/validation.js";
-import memberService from "../member/index.js";
+import { getDTO } from "../member/index.js";
 import memberUtils from "../member/utils.js";
 import customError from "../../utils/error.js";
 import hashingUtils from "../../utils/hashing.js";
@@ -38,7 +38,7 @@ const signin = async ({ email, password }) => {
   }
 
   // ### → -> -> Update member to include a refresh token in their token <- <- <-
-  let memberDTO = memberService.getDTO(member);
+  let memberDTO = getDTO(member);
 
   const refreshToken = tokenService.generateRefreshToken(memberDTO);
 

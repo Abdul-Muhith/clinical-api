@@ -154,7 +154,7 @@ const badRequest = (message, errors, hints) => {
       },
     ],
     hints:
-      hints ?? `Please, ensure all fields are correctly filled and try again.`,
+      hints ?? `Please, ensure all fields are correctly filled and try again`,
     trace_id: traceId,
   });
 };

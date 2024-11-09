@@ -1,12 +1,9 @@
-import { localCreate } from "./create.js";
+export { default as localCreate } from "./localCreate.js";
+export { default as findAll } from "./findAll.js";
+export { default as expandRole } from "./expandRole.js";
 
-import utils from "./utils.js";
-import validation from "./validation.js";
-import getDTO from "./DTO.js";
+export { default as utils } from "./utils.js";
+export { default as validation } from "./validation.js";
 
-export default {
-  utils,
-  validation,
-  localCreate,
-  getDTO,
-};
+export { default as getDTO } from "./DTO.js";
+export { default as getExpandedDTO } from "./expandedDTO.js";

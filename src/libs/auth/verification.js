@@ -1,6 +1,6 @@
 import validationUtils from "../../utils/validation/index.js";
 import memberValidate from "../member/validation.js";
-import memberService from "../member/index.js";
+import { getDTO } from "../member/index.js";
 import memberUtils from "../member/utils.js";
 import customError from "../../utils/error.js";
 import tokenService from "../token/index.js";
@@ -43,7 +43,7 @@ const verification = async ({ id, role, status, ownId }) => {
   member.status = status;
   if (role) member.role = role;
 
-  let memberDTO = memberService.getDTO(member);
+  let memberDTO = getDTO(member);
 
   const refreshToken = tokenService.generateRefreshToken(memberDTO);
 

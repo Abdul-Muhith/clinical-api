@@ -1,11 +1,13 @@
 import dotenv from "dotenv";
 
+import defaults from "./defaults.js";
 import auth from "./auth.js";
 
 // Load environment variables from .env file
 dotenv.config();
 
 const config = {
+  defaults,
   auth,
   port: process.env.SERVER_PORT || 4000,
   type: process.env.TYPE,

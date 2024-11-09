@@ -3,7 +3,7 @@ import { isAfter } from "date-fns";
 
 import customError from "../utils/error.js";
 import tokenService from "../libs/token/index.js";
-import memberService from "../libs/member/index.js";
+import { utils, getDTO } from "../libs/member/index.js";
 
 const authenticate = async (req, _res, next) => {
   try {
@@ -52,10 +52,7 @@ const authenticate = async (req, _res, next) => {
     }
 
     // ### → -> -> Check if the member exists in the database to ensure they haven't been removed or deleted, even if the token is present in the header <- <- <-
-    const member = await memberService.utils.findMemberByProperty(
-      `email`,
-      payload.email
-    );
+    const member = await utils.findMemberByProperty(`email`, payload.email);
 
     // ### → -> -> Confirm whether their issued IP matches the current IP <- <- <-
     if (!member || (member?.issuedIp && member?.issuedIp !== ip.address())) {
@@ -83,7 +80,7 @@ const authenticate = async (req, _res, next) => {
       ]);
     }
 
-    let memberDTO = memberService.getDTO(member);
+    let memberDTO = getDTO(member);
 
     delete memberDTO.created_at;
     delete memberDTO.updated_at;

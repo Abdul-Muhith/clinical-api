@@ -1,6 +1,6 @@
 import authService from "../../../../libs/auth/index.js";
 import memberValidate from "../../../../libs/member/validation.js";
-import memberService from "../../../../libs/member/index.js";
+import { getDTO } from "../../../../libs/member/index.js";
 import tokenService from "../../../../libs/token/index.js";
 import tokenUtils from "../../../../utils/token/index.js";
 
@@ -28,7 +28,7 @@ const signup = async (req, res, next) => {
     });
 
     // ### → -> -> Generate necessary responses <- <- <-
-    const memberDTO = memberService.getDTO(member);
+    const memberDTO = getDTO(member);
 
     const token = tokenService.generateAccessToken(memberDTO);
 

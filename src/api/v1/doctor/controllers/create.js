@@ -1,12 +1,12 @@
 import doctorValidate from "../../../../libs/doctor/validation.js";
-import doctorService from "../../../../libs/doctor/index.js";
+import { create, getDTO } from "../../../../libs/doctor/index.js";
 
 /**
  * This function will destructure request body , call doctor's service to designate a previously registered member as a doctor, or register a new one and generate necessary responses.
  * @returns object of status, code, message, data and links
  * @param {*} req, res, next
  */
-const create = async (req, res, next) => {
+const createDoctor = async (req, res, next) => {
   // ### → -> -> destructure the request body <- <- <-
   const {
     member,
@@ -23,7 +23,7 @@ const create = async (req, res, next) => {
     doctorValidate.requiredFields({ member, email }); // If there are errors, throw the errors
 
     // ### → -> -> Invoke the service function <- <- <-
-    const { getMember, getDoctor } = await doctorService.create({
+    const { getMember, getDoctor } = await create({
       member,
       username,
       phone,
@@ -34,7 +34,7 @@ const create = async (req, res, next) => {
     });
 
     // ### → -> -> Generate necessary responses <- <- <-
-    const doctorDTO = doctorService.getDTO(getDoctor, getMember);
+    const doctorDTO = getDTO(getDoctor, getMember);
 
     return res.status(201).json({
       code: 201,
@@ -51,4 +51,4 @@ const create = async (req, res, next) => {
   }
 };
 
-export default create;
+export default createDoctor;

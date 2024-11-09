@@ -1,6 +1,6 @@
 import ip from "ip";
 
-import memberService from "../member/index.js";
+import { localCreate } from "../member/index.js";
 import memberValidate from "../member/validation.js";
 
 const signup = async ({
@@ -24,7 +24,7 @@ const signup = async ({
   memberValidate.throwError(`Must fill up all required fields.`); // If there are errors, throw the errors
 
   // ### → -> -> Store a new member to database <- <- <-
-  return await memberService.localCreate({
+  return await localCreate({
     username,
     phone,
     email,

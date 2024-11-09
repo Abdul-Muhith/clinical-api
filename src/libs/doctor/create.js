@@ -6,7 +6,7 @@ import dbUtils from "../../utils/db/index.js";
 import doctorUtils from "./utils.js";
 import memberUtils from "../member/utils.js";
 
-export const create = async ({
+const create = async ({
   member,
   username,
   phone,
@@ -116,3 +116,5 @@ export const create = async ({
     return { getMember: findMember, getDoctor: newDoctor };
   }
 };
+
+export default create;

@@ -713,11 +713,11 @@ components:
     Timestamp:
       type: object
       properties:
-        created_at:
+        createdAt:
           type: string
           format: date-time
           example: 2024-09-21T12:34:56Z
-        updated_at:
+        updatedAt:
           type: string
           format: date-time
           example: 2024-09-21T12:34:56Z
@@ -1353,7 +1353,7 @@ components:
       name: expand
       in: query
       required: false
-      description: A comma-separated list of fields for expansion where each field may specifies additional fields to include in the result. If not specified, all related resource fields will be expanded. Typically, results will default based on use case.
+      description: A comma-separated list of fields to expand, where each field may specifies additional subfields to include in the result using `dot notation`. If not specified, all related resource fields will be expanded. Typically, results will default based on use case.
       schema:
         type: string
         default: ""

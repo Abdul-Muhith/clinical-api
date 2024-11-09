@@ -1,7 +1,7 @@
 import models from "../../models/index.js";
 import dbUtils from "../../utils/db/index.js";
 
-const findDoctorByProperty = async (key, value) => {
+export const findDoctorByProperty = async (key, value) => {
   const doctor = await dbUtils.dbFindDocumentByProperty(
     models.Doctor,
     key,
@@ -11,7 +11,7 @@ const findDoctorByProperty = async (key, value) => {
   return doctor ?? false;
 };
 
-const checkDoctorExistsByMember = async (member) => {
+export const checkDoctorExistsByMember = async (member) => {
   return await dbUtils.dbEntityExistsByProperty(
     models.Doctor,
     `member`,
@@ -19,7 +19,7 @@ const checkDoctorExistsByMember = async (member) => {
   );
 };
 
-const checkDoctorExistsByTraceId = async (traceId) => {
+export const checkDoctorExistsByTraceId = async (traceId) => {
   return await dbUtils.dbEntityExistsByProperty(
     models.Doctor,
     `traceId`,
@@ -27,7 +27,7 @@ const checkDoctorExistsByTraceId = async (traceId) => {
   );
 };
 
-const checkDoctorExistsByProperty = async (key, value) => {
+export const checkDoctorExistsByProperty = async (key, value) => {
   return await dbUtils.dbEntityExistsByProperty(models.Doctor, key, value);
 };
 
