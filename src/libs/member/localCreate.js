@@ -1,6 +1,6 @@
 import models from "../../models/index.js";
 import validate from "./validation.js";
-import dbUtils from "../../utils/db/index.js";
+import { dbCreateDocument } from "../../utils/db/index.js";
 import { hashing } from "../../utils/index.js";
 
 const localCreate = async ({ username, phone, email, password, issuedIp }) => {
@@ -29,7 +29,7 @@ const localCreate = async ({ username, phone, email, password, issuedIp }) => {
     status: "pending",
   };
 
-  return await dbUtils.dbCreateDocument(models.Member, payload);
+  return await dbCreateDocument(models.Member, payload);
 };
 
 export default localCreate;

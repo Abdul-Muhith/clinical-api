@@ -4,8 +4,6 @@ import validationUtils, {
   throwError as validateThrowError,
 } from "../../utils/validation/index.js";
 
-import { format } from "../../utils/index.js";
-
 export { throwError as validateThrowError } from "../../utils/validation/index.js";
 
 // Initialize an empty array to store errors
@@ -165,43 +163,6 @@ const availability = (input) => {
   }
 };
 
-// ### → Validate select query parameter and return an error if invalid
-const selectParameter = (selects = [], allowedFields = []) => {
-  if (
-    selects &&
-    (!Array.isArray(selects) ||
-      !selects.every((item) => typeof item === "string"))
-  ) {
-    errors.push({
-      code: `INVALID_DOCTOR_SELECTION`,
-      message: `The selection should be a list of strings.`,
-      field: `doctor_selection`,
-      location: `query`,
-      status: 400,
-    });
-  } else if (
-    selects &&
-    Array.isArray(selects) &&
-    selects.every((item) => typeof item === "string")
-  ) {
-    const invalidFields = selects.filter(
-      (select) => !allowedFields.includes(select)
-    );
-
-    const uniqueFields = [...new Set(invalidFields)]; // Remove duplicates from invalid fields
-
-    if (invalidFields.length > 0) {
-      errors.push({
-        code: "INVALID_DOCTOR_SELECTION",
-        message: "One or more selection fields are invalid.",
-        field: format.fieldNames(uniqueFields),
-        location: "query",
-        status: 400,
-      });
-    }
-  }
-};
-
 export default {
   throwError,
   objectId,
@@ -209,7 +170,6 @@ export default {
   specialty,
   conditions,
   availability,
-  selectParameter,
   getErrors: () => errors,
   clearErrors: () => {
     errors = [];

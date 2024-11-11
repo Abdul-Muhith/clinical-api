@@ -10,24 +10,29 @@ const formatExpand = (expand = ``) => {
   const expandFieldsArray = expand.split(`,`);
 
   return expandFieldsArray.reduce((acc, item) => {
-    // Extract the pathFields and selectedFields
-    const [path, select] = item.split(`.`);
+    // Validate if the provided expansion follows the correct format
+    const extractedFields = item.split(".");
 
-    if (path) {
-      // Check if the path already exists in the accumulator
-      let pathObject = acc.find((item) => item.path === path);
+    if (extractedFields.length > 1 && extractedFields[1] !== ``) {
+      // Extract the pathFields and selectedFields
+      const [path, select] = item.split(`.`);
 
-      if (pathObject) {
-        pathObject.select += ` ${select}`; // Append the select field
-      } else {
-        if (select) {
-          acc.push({ path: path, select: select }); // Create a new entry
+      if (path) {
+        // Check if the path already exists in the accumulator
+        let pathObject = acc.find((item) => item.path === path);
+
+        if (pathObject) {
+          pathObject.select += ` ${select}`; // Append the select field
         } else {
-          acc[acc.length - 1].select += ` ${path}`; // Append the select field
+          if (select) {
+            acc.push({ path: path, select: select }); // Create a new entry
+          } else {
+            acc[acc.length - 1].select += ` ${path}`; // Append the select field
+          }
         }
-      }
 
-      return acc;
+        return acc;
+      }
     }
   }, []);
 };

@@ -87,7 +87,7 @@ const findAllMembers = async (req, res, next) => {
       "status",
       "createdAt",
       "updatedAt",
-    ]);
+    ]); // Array to generate a serial sequence, field by field
 
     const responses = {
       code: 200,
@@ -97,6 +97,9 @@ const findAllMembers = async (req, res, next) => {
         pagination,
         links: {
           ...links,
+          administrators: getUrl
+            .split("?")[0]
+            .replace(`members/local`, `administrators`),
           doctors: getUrl.split("?")[0].replace(`members`, `doctors`),
           nurses: getUrl.split("?")[0].replace(`members`, `nurses`),
           users: getUrl.split("?")[0].replace(`members`, `users`),

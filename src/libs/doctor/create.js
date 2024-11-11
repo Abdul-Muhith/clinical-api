@@ -1,8 +1,8 @@
 import models from "../../models/index.js";
-import doctorValidate, { validateThrowError } from "./validation.js";
+import doctorValidate from "./validation.js";
 import memberValidate from "../member/validation.js";
 import { generateTraceId } from "../../utils/index.js";
-import dbUtils from "../../utils/db/index.js";
+import { dbCreateDocument } from "../../utils/db/index.js";
 import doctorUtils from "./utils.js";
 import memberUtils from "../member/utils.js";
 
@@ -49,10 +49,7 @@ const create = async ({
       status: "pending",
     };
 
-    const newMember = await dbUtils.dbCreateDocument(
-      models.Member,
-      memberPayload
-    );
+    const newMember = await dbCreateDocument(models.Member, memberPayload);
 
     // Create a new doctor
     const doctorPayload = {
@@ -63,10 +60,7 @@ const create = async ({
       availability,
     };
 
-    const newDoctor = await dbUtils.dbCreateDocument(
-      models.Doctor,
-      doctorPayload
-    );
+    const newDoctor = await dbCreateDocument(models.Doctor, doctorPayload);
 
     return { getMember: newMember, getDoctor: newDoctor };
 
@@ -108,10 +102,7 @@ const create = async ({
       availability,
     };
 
-    const newDoctor = await dbUtils.dbCreateDocument(
-      models.Doctor,
-      doctorPayload
-    );
+    const newDoctor = await dbCreateDocument(models.Doctor, doctorPayload);
 
     return { getMember: findMember, getDoctor: newDoctor };
   }

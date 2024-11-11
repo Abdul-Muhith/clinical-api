@@ -400,10 +400,11 @@ const expand = (expand = ``, allowedFields = []) => {
         if (seen.has(path)) {
           return true;
         }
+
         seen.add(path);
         return false;
       } else {
-        // TODO: Check if duplicate selection in each object
+        // TODO: Check if duplicate expanding in each object
       }
     });
 
@@ -412,6 +413,23 @@ const expand = (expand = ``, allowedFields = []) => {
         code: `DUPLICATE_EXPAND`,
         message: `There are duplicate expanding fields.`,
         field: format.fieldNames(isFieldDuplicates),
+        location: "query",
+        status: 400,
+      });
+    }
+
+    // Check for invalid expanding fields
+    const invalidFields = expandFieldsArray.filter(
+      (item) => !allowedFields.includes(item)
+    );
+
+    const uniqueFields = [...new Set(invalidFields)]; // Remove duplicates from invalid fields
+
+    if (invalidFields.length > 0) {
+      errors.push({
+        code: `INVALID_EXPAND`,
+        message: `The provided parameter is currently unable to expand.`,
+        field: format.fieldNames(uniqueFields),
         location: "query",
         status: 400,
       });
@@ -498,4 +516,8 @@ export default {
   searchTerm,
   expand,
   select,
+  getErrors: () => errors,
+  clearErrors: () => {
+    errors = [];
+  },
 };

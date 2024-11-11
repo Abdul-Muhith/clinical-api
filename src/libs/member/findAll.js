@@ -86,13 +86,15 @@ const findAll = async ({
     .select(selectCriteria);
 
   // ### → -> -> Parse expanding parameters <- <- <-
-  const formattedExpand = parse.expandParameter(
-    expand,
-    allowedForMember.expandFields
-  );
+  const formattedExpand =
+    expand && parse.expandParameter(expand, allowedForMember.expandFields);
 
   // Expand the members based on the specified expansions
-  if (members.some((member) => member) && formattedExpand?.length > 0) {
+  if (
+    members.some((member) => member) &&
+    formattedExpand &&
+    formattedExpand?.length > 0
+  ) {
     const expandedCriteria = await expandRole(formattedExpand, members);
 
     if (expandedCriteria) {
@@ -103,9 +105,23 @@ const findAll = async ({
     }
   }
 
+  // TODO: Remove later ---> Convert to a plain JavaScript object and remove the internal Mongoose metadata fields
+  // const cleanMembers = members.map((member) => {
+  //   const plainMember = member.toObject();
+
+  //   delete plainMember.$__;
+  //   delete plainMember.$isNew;
+
+  //   return plainMember;
+  // });
+
+  // console.log("undefined => ", members._doc && members._doc.length);
+
   return {
     totalItems: members.length,
     members: members.slice(page * size - size, page * size), // Skip and limit
+    // members: members._doc.slice(page * size - size, page * size), // Skip and limit
+    // members: cleanMembers.slice(page * size - size, page * size), // Skip and limit
   };
 };
 

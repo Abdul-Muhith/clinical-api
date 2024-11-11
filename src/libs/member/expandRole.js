@@ -4,6 +4,8 @@ import doctorValidate, {
   validateThrowError as doctorThrowError,
 } from "../doctor/validation.js";
 
+import queryValidate from "../../utils/validation/query.js";
+
 import { allowedForDoctor } from "../../config/defaults.js";
 
 import { expandMultipleMembersByRole } from "../member/utils.js";
@@ -32,16 +34,16 @@ const expandRole = async (formattedExpand = [], document = {} || []) => {
         formattedExpand.map(async (item) => {
           // When the path is equal to 'doctor'
           if (item.path === `doctor`) {
-            doctorValidate.selectParameter(
-              item.select.split(" "),
+            queryValidate.select(
+              item.select.split(` `).join(`,`),
               allowedForDoctor.selectFields
             );
 
-            doctorThrowError(
+            queryValidate.throwError(
               `The doctor parameter is currently unable to select.`,
               `Please, ensure all fields are correctly filled and try again`,
-              doctorValidate.getErrors(),
-              doctorValidate.clearErrors() // Clear errors for the next validation
+              queryValidate.getErrors(),
+              queryValidate.clearErrors() // Clear errors for the next validation
             );
 
             // ### → -> -> Expand each member who have the 'doctor' role to include doctor information <- <- <-

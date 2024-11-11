@@ -30,7 +30,18 @@ const getTransformedItems = (items = [], path = ``, selection = []) => {
   // TODO: validate path is string or not -> return "path must be a string format"
 
   if (selection.length === 0) {
-    return items.map((item) => ({ ...item, link: `${path}/${item._id}` }));
+    return items.map((item) => {
+      const test = {
+        ...item,
+        id: item._id,
+        link: `${path}/${item._id}`,
+      };
+
+      delete test._id;
+      delete test.__v;
+
+      return test;
+    });
   }
 
   return items.map((item) => {
@@ -39,7 +50,7 @@ const getTransformedItems = (items = [], path = ``, selection = []) => {
     selection.forEach((key) => {
       if (key === `id`) {
         result[`id`] = item[`_id`];
-      } else if (item.hasOwnProperty(key)) {
+      } else if (key in item) {
         result[key] = item[key];
       }
     });

@@ -486,25 +486,25 @@ paths:
                             properties:
                               self:
                                 type: string
-                                example: /api/v1/local/users?page=2&size=25
+                                example: /api/v1/members/local?page=2&size=25
                               nextPage:
                                 type: string
-                                example: /api/v1/local/users?page=3&size=25
+                                example: /api/v1/members/local?page=3&size=25
                               prevPage:
                                 type: string
-                                example: /api/v1/local/users?page=1&size=25
+                                example: /api/v1/members/local?page=1&size=25
                               administrators:
                                 type: string
-                                example: /api/v1/local/users?page=2&size=25&filter=role:administrator
+                                example: /api/v1/administrators
                               doctors:
                                 type: string
-                                example: /api/v1/local/users?page=2&size=25&filter=role:doctor
+                                example: /api/v1/doctors/local
                               nurses:
                                 type: string
-                                example: /api/v1/local/users?page=2&size=25&filter=role:nurse
+                                example: /api/v1/nurses/local
                               users:
                                 type: string
-                                example: /api/v1/local/users?page=2&size=25&filter=role:user
+                                example: /api/v1/users/local
         400:
           description: Bad request
           content:

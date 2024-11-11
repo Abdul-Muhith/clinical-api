@@ -2,26 +2,27 @@ import models from "../../models/index.js";
 
 import { findDoctorByProperty } from "../doctor/utils.js";
 
+import {
+  dbFindDocumentByProperty,
+  dbEntityExistsByProperty,
+} from "../../utils/db/index.js";
+
 const findMemberByProperty = async (key, value) => {
-  const member = await dbUtils.dbFindDocumentByProperty(
-    models.Member,
-    key,
-    value
-  );
+  const member = await dbFindDocumentByProperty(models.Member, key, value);
 
   return member ?? false;
 };
 
 const checkMemberExistsByEmail = async (email) => {
-  return await dbUtils.dbEntityExistsByProperty(models.Member, `email`, email);
+  return await dbEntityExistsByProperty(models.Member, `email`, email);
 };
 
 const checkMemberExistsByPhone = async (phone) => {
-  return await dbUtils.dbEntityExistsByProperty(models.Member, `phone`, phone);
+  return await dbEntityExistsByProperty(models.Member, `phone`, phone);
 };
 
 const checkMemberExistsByProperty = async (key, value) => {
-  return await dbUtils.dbEntityExistsByProperty(models.Member, key, value);
+  return await dbEntityExistsByProperty(models.Member, key, value);
 };
 
 export const expandMultipleMembersByRole = async (
