@@ -63,14 +63,20 @@ export const expandMultipleMembersByRole = async (
             ...member._doc,
           });
         }
-        // TODO: ### → -> -> Expand each member who have the nurse information <- <- <-
-        // } else if (nurseInfo) {
-      } else {
-        // ### → -> -> Add nonExpanded member into the accumulator <- <- <-
+      }
+      // TODO: ### → -> -> Expand each member who have the nurse information <- <- <-
+      // else if (nurseInfo) { }
+      else {
+        // ### → -> -> Add members without additional information to the accumulator, against their role <- <- <-
         acc.push({
           ...member._doc,
         });
       }
+    } else {
+      // ### → -> -> Add nonExpanded member into the accumulator <- <- <-
+      acc.push({
+        ...member._doc,
+      });
     }
 
     return acc;

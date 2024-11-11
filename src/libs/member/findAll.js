@@ -100,28 +100,14 @@ const findAll = async ({
     if (expandedCriteria) {
       return {
         totalItems: members.length,
-        members: expandedCriteria[0].slice(0, size), // Limit to 'size' items
+        members: expandedCriteria[0].slice(page * size - size, page * size), // Skip and limit to 'size' items
       };
     }
   }
 
-  // TODO: Remove later ---> Convert to a plain JavaScript object and remove the internal Mongoose metadata fields
-  // const cleanMembers = members.map((member) => {
-  //   const plainMember = member.toObject();
-
-  //   delete plainMember.$__;
-  //   delete plainMember.$isNew;
-
-  //   return plainMember;
-  // });
-
-  // console.log("undefined => ", members._doc && members._doc.length);
-
   return {
     totalItems: members.length,
-    members: members.slice(page * size - size, page * size), // Skip and limit
-    // members: members._doc.slice(page * size - size, page * size), // Skip and limit
-    // members: cleanMembers.slice(page * size - size, page * size), // Skip and limit
+    members: members.slice(page * size - size, page * size), // Skip and limit to 'size' items
   };
 };
 
