@@ -570,6 +570,167 @@ paths:
           $ref: "#/components/responses/500"
         503:
           $ref: "#/components/responses/503"
+  /member-profiles:
+    post:
+      operationId: profileCreation
+      security:
+        - bearerAuth: []
+      tags: [Member]
+      summary: Create a new member profile with credentials
+      description: This endpoint allows an authenticated user to create a profile by providing the necessary information.
+      requestBody:
+        description: To create a new profile, please ensure you provide valid credentials and must include both member ID and gender.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                member:
+                  type: string
+                  format: ObjectId
+                  example: 66c0771e9aced6fee1c93b5e
+                  description: A unique and valid identifier representing a previously registered member for whom you want to create a profile.
+                gender:
+                  type: string
+                  description: The gender of the doctor
+                  example: male
+                age:
+                  type: integer
+                  example: 25
+                bloodGroup:
+                  type: string
+                  example: "O+"
+                photo:
+                  type: object
+                  properties:
+                    caption:
+                      type: string
+                      example: Dr. Abdullah
+                    imageAlt:
+                      type: string
+                      example: A professional photo of Dr. Abdullah, General Practitioner
+                    assetId:
+                      type: string
+                      example: 12345abcde
+                    publicId:
+                      type: string
+                      example: doctor-photos/dr_abdullah
+                    folder:
+                      type: string
+                      example: doctor-photos
+                    url:
+                      type: string
+                      example: https://example.com/doctor-photos/abdullah.jpg
+                    width:
+                      type: integer
+                      example: 600
+                    height:
+                      type: integer
+                      example: 800
+                    type:
+                      type: string
+                      example: image
+                    format:
+                      type: string
+                      example: jpg
+                    size:
+                      type: integer
+                      example: 150000
+                  required: [caption, assetId, publicId, url, type, format]
+                address:
+                  type: object
+                  properties:
+                    village:
+                      type: string
+                      example: sungow
+                    postOffice:
+                      type: string
+                      example: sungow bazar
+                    postalCode:
+                      type: integer
+                      example: 1218
+                    thana:
+                      type: string
+                      example: sungow police
+                    district:
+                      type: string
+                      example: sungow
+                    division:
+                      type: string
+                      example: dhaka
+                    country:
+                      type: string
+                      example: bangladesh
+              required: [member, gender]
+      responses:
+        201:
+          description: Profile creation was successful.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - type: object
+                    properties:
+                      code:
+                        type: integer
+                        format: int32
+                        example: 201
+                      message:
+                        type: string
+                        description: A human-readable description of the action that occurred.
+                        example: Profile creation was completed successfully.
+                      data:
+                        allOf:
+                          - type: object
+                          - description: A list of the specific credentials used to create the new profile.
+                          - $ref: "#/components/schemas/ProfileDTO"
+                          - $ref: "#/components/schemas/Timestamp"
+                  - type: object
+                    properties:
+                      links:
+                        type: object
+                        properties:
+                          self:
+                            type: string
+                            example: /api/v1/member-profiles
+                          profile:
+                            type: string
+                            example: /api/v1/member-profiles/60d21b4667d0d8992e610c88
+                          member:
+                            type: string
+                            example: /api/v1/members/local/66c0771e9aced6fee1c93b5e
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    format: int32
+                    example: 400
+                  message:
+                    type: string
+                    description: A human-readable description of the error that occurred.
+                    example: Validation Error
+                  errors:
+                    allOf:
+                      - type: array
+                        description: An array detailing specific errors encountered in the request.
+                        items:
+                        $ref: "#/components/schemas/BadRequestError"
+                      - $ref: "#/components/schemas/ProfileCreationErrorResponse"
+                  hints:
+                    type: string
+                    description: Suggestions or tips to help resolve the error.
+                    example: Please, ensure all fields are correctly filled and try again. If the issue persists, feel free to contact our technical support.
+                  trace_id:
+                    $ref: "#/components/schemas/TraceID"
+        500:
+          $ref: "#/components/responses/500"
+        503:
+          $ref: "#/components/responses/503"
   /doctors:
     post:
       operationId: doctorCreation
@@ -829,6 +990,90 @@ components:
               type: string
               enum: [active, disabled, request changed, pending]
               example: pending
+    ProfileDTO:
+      allOf:
+        - type: object
+          properties:
+            id:
+              type: string
+              description: Must be MongoDB Object Id
+              example: 60d21b4667d0d8992e610c88
+            member:
+              type: string
+              format: ObjectId
+              example: 66c0771e9aced6fee1c93b5e
+              description: A unique and valid identifier representing a previously registered member for whom you want to create a profile.
+            gender:
+              type: string
+              description: The gender of the doctor
+              example: male
+            age:
+              type: integer
+              example: 25
+            bloodGroup:
+              type: string
+              example: "O+"
+            photo:
+              type: object
+              properties:
+                caption:
+                  type: string
+                  example: Dr. Abdullah
+                imageAlt:
+                  type: string
+                  example: A professional photo of Dr. Abdullah, General Practitioner
+                assetId:
+                  type: string
+                  example: 12345abcde
+                publicId:
+                  type: string
+                  example: doctor-photos/dr_abdullah
+                folder:
+                  type: string
+                  example: doctor-photos
+                url:
+                  type: string
+                  example: https://example.com/doctor-photos/abdullah.jpg
+                width:
+                  type: integer
+                  example: 600
+                height:
+                  type: integer
+                  example: 800
+                type:
+                  type: string
+                  example: image
+                format:
+                  type: string
+                  example: jpg
+                size:
+                  type: integer
+                  example: 150000
+              required: [caption, assetId, publicId, url, type, format]
+            address:
+              type: object
+              properties:
+                village:
+                  type: string
+                  example: sungow
+                postOffice:
+                  type: string
+                  example: sungow bazar
+                postalCode:
+                  type: integer
+                  example: 1218
+                thana:
+                  type: string
+                  example: sungow police
+                district:
+                  type: string
+                  example: sungow
+                division:
+                  type: string
+                  example: dhaka
+                country:
+                  type: string
+                  example: bangladesh
     AccessToken:
       type: object
       properties:
@@ -1093,6 +1338,38 @@ components:
           field: page, size, sort, sort_by, sort_order, filter, search, search_term, expand and select
           location: query
           status: 400
+    ProfileCreationErrorResponse:
+      example:
+      - code: MISSING_MEMBER_ID
+        message: The member ID is required.
+        field: memberId
+        location: body
+        status: 400
+      - code: INVALID_GENDER
+        message: The gender provided is invalid.
+        field: gender
+        location: body
+        status: 400
+      - code: INVALID_BLOOD_GROUP
+        message: The blood group provided is invalid.
+        field: bloodGroup
+        location: body
+        status: 400
+      - code: INVALID_PHOTO
+        message: The photo format is invalid.
+        field: photo
+        location: body
+        status: 400
+      - code: INVALID_ADDRESS
+        message: The address provided is invalid.
+        field: address
+        location: body
+        status: 400
+      - code: INVALID_INPUT
+        message: One or more input fields are invalid.
+        field: null
+        location: body
+        status: 400
   responses:
     401:
       description: Unauthorized
