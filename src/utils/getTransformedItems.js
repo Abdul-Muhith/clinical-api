@@ -10,7 +10,7 @@
  * @throws {Error} - Throws an error if the parameters are invalid (e.g., `items` or `selection` is not an array, or if `path` is not a string).
  */
 
-const getTransformedItems = (items = [], path = ``, selection = []) => {
+const getTransformedItems = (items = [], selection = [], path = ``) => {
   // TODO: Throw an error later when the provided parameters are invalid
 
   // if (!Array.isArray(items) || !Array.isArray(selection)) {
@@ -34,8 +34,11 @@ const getTransformedItems = (items = [], path = ``, selection = []) => {
       const test = {
         ...item,
         id: item._id,
-        link: `${path}/${item._id}`,
       };
+
+      if (path !== ``) {
+        test.link = `${path}/${item._id}`;
+      }
 
       delete test._id;
       delete test.__v;
@@ -55,7 +58,9 @@ const getTransformedItems = (items = [], path = ``, selection = []) => {
       }
     });
 
-    result.link = `${path}/${item._id}`;
+    if (path !== ``) {
+      result.link = `${path}/${item._id}`;
+    }
 
     return result;
   });

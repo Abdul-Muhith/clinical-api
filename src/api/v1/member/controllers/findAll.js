@@ -1,4 +1,6 @@
-import defaultConfig from "../../../../config/defaults.js";
+import defaultConfig, {
+  allowedForMember,
+} from "../../../../config/defaults.js";
 
 import { findAll } from "../../../../libs/member/index.js";
 
@@ -74,20 +76,11 @@ const findAllMembers = async (req, res, next) => {
       page
     );
 
-    const data = getTransformedItems(members, getUrl.split("?")[0], [
-      "id",
-      "username",
-      "phone",
-      "email",
-      "traceId",
-      "specialty",
-      "conditions",
-      "availability",
-      "role",
-      "status",
-      "createdAt",
-      "updatedAt",
-    ]); // Array to generate a serial sequence, field by field
+    const data = getTransformedItems(
+      members,
+      allowedForMember.expandedFieldsToResponse, // Array to generate a serial sequence, field by field
+      getUrl.split("?")[0]
+    );
 
     const responses = {
       code: 200,

@@ -581,7 +581,7 @@ paths:
       requestBody:
         description: To create a new profile, please ensure you provide valid credentials and must include both member ID and gender.
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
@@ -592,51 +592,63 @@ paths:
                   description: A unique and valid identifier representing a previously registered member for whom you want to create a profile.
                 gender:
                   type: string
-                  description: The gender of the doctor
+                  description: The gender of the member
                   example: male
                 age:
                   type: integer
+                  description: The age of the member
                   example: 25
                 bloodGroup:
                   type: string
+                  description: The blood group of the member
                   example: "O+"
                 photo:
-                  type: object
-                  properties:
-                    caption:
-                      type: string
-                      example: Dr. Abdullah
-                    imageAlt:
-                      type: string
-                      example: A professional photo of Dr. Abdullah, General Practitioner
-                    assetId:
-                      type: string
-                      example: 12345abcde
-                    publicId:
-                      type: string
-                      example: doctor-photos/dr_abdullah
-                    folder:
-                      type: string
-                      example: doctor-photos
-                    url:
-                      type: string
-                      example: https://example.com/doctor-photos/abdullah.jpg
-                    width:
-                      type: integer
-                      example: 600
-                    height:
-                      type: integer
-                      example: 800
-                    type:
-                      type: string
-                      example: image
-                    format:
-                      type: string
-                      example: jpg
-                    size:
-                      type: integer
-                      example: 150000
-                  required: [caption, assetId, publicId, url, type, format]
+                  type: string
+                  format: binary
+                  description: The professional photo of the member
+                # folder:
+                #   type: string
+                #   description: folder name to upload file
+                #   example: doctor-photos
+                # width:
+                #   type: integer
+                #   description: width of the file
+                #   example: 600
+                # height:
+                #   type: integer
+                #   description: height of the file
+                #   example: 800
+                # files:
+                #   type: object
+                #   properties:
+                #     caption:
+                #       type: string
+                #       example: Dr. Abdullah
+                #     imageAlt:
+                #       type: string
+                #       example: A professional photo of Dr. Abdullah, General Practitioner
+                #     assetId:
+                #       type: string
+                #       example: 12345abcde
+                #     publicId:
+                #       type: string
+                #       example: doctor-photos/dr_abdullah
+                #     folder:
+                #       type: string
+                #       example: doctor-photos
+                #     url:
+                #       type: string
+                #       example: https://example.com/doctor-photos/abdullah.jpg
+                #     type:
+                #       type: string
+                #       example: image
+                #     format:
+                #       type: string
+                #       example: jpg
+                #     size:
+                #       type: integer
+                #       example: 150000
+                #   required: [caption, assetId, publicId, url, type, format]
                 address:
                   type: object
                   properties:

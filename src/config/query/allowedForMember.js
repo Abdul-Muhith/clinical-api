@@ -18,6 +18,22 @@ const searchFields = ["username", "phone", "email"];
 // ### -> --> --> Define the allowed expand fields for member <- <-- <--
 const expandFields = ["doctor", "nurse"];
 
+// ### -> --> --> Define the expanded fields to response for member <- <-- <--
+const expandedFieldsToResponse = [
+  "id",
+  "username",
+  "phone",
+  "email",
+  "traceId",
+  "specialty",
+  "conditions",
+  "availability",
+  "role",
+  "status",
+  "createdAt",
+  "updatedAt",
+];
+
 // ### -> --> --> Define the allowed select fields for member <- <-- <--
 const selectFields = [
   "*",
@@ -36,5 +52,6 @@ export default {
   sortByFields,
   searchFields,
   expandFields,
+  expandedFieldsToResponse,
   selectFields,
 };

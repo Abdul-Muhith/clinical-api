@@ -1,4 +1,16 @@
-export { allowedForMember, allowedForDoctor } from "./query/index.js";
+export {
+  allowedForMember,
+  allowedForDoctor,
+  allowedForProfile,
+} from "./query/index.js";
+
+export {
+  imageLimitToUpload,
+  videoLimitToUpload,
+  cloudinaryDirectoryToUploadProfilePhoto,
+  allowedFormatsToUpload,
+  cloudinaryFieldsToResponse,
+} from "./upload.js";
 
 const defaults = {
   page: 1,

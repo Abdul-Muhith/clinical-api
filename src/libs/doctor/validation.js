@@ -14,7 +14,7 @@ const throwError = (message = ``, hints = ``, array = []) => {
   validateThrowError(
     message || ``,
     hints || `Please, ensure all fields are correctly filled and try again`,
-    array ?? errors,
+    array.length ? array : errors,
     () => (errors = []) // Clear errors for the next validation
   );
 
