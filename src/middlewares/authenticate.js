@@ -59,7 +59,7 @@ const authenticate = async (req, _res, next) => {
       throw customError.forbiddenError(``, [
         {
           code: "INVALID_IP_ADDRESS",
-          message: "The IP address is currently denied access to the service.",
+          message: `The IP address ${ip.address()} is currently denied access to the service.`,
           field: "accessToken",
           location: "header",
           status: 403,

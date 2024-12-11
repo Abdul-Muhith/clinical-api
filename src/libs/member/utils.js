@@ -1,28 +1,28 @@
-import models from "../../models/index.js";
+import { MemberModel } from "../../models/index.js";
 
 import { findDoctorByProperty } from "../doctor/utils.js";
 
 import {
   dbFindDocumentByProperty,
   dbEntityExistsByProperty,
-} from "../../utils/db/index.js";
+} from "../../utils/index.js";
 
 const findMemberByProperty = async (key, value) => {
-  const member = await dbFindDocumentByProperty(models.Member, key, value);
+  const member = await dbFindDocumentByProperty(MemberModel, key, value);
 
   return member ?? false;
 };
 
 const checkMemberExistsByEmail = async (email) => {
-  return await dbEntityExistsByProperty(models.Member, `email`, email);
+  return await dbEntityExistsByProperty(MemberModel, `email`, email);
 };
 
 const checkMemberExistsByPhone = async (phone) => {
-  return await dbEntityExistsByProperty(models.Member, `phone`, phone);
+  return await dbEntityExistsByProperty(MemberModel, `phone`, phone);
 };
 
 const checkMemberExistsByProperty = async (key, value) => {
-  return await dbEntityExistsByProperty(models.Member, key, value);
+  return await dbEntityExistsByProperty(MemberModel, key, value);
 };
 
 export const expandMultipleMembersByRole = async (
@@ -46,7 +46,8 @@ export const expandMultipleMembersByRole = async (
         if (selectedArray.includes("*")) {
           acc.push({
             ...doctorInfo._doc,
-            ...member._doc,
+            ...member,
+            // ...member._doc,
           });
         } else {
           // Only the specified fields should be added to each document
@@ -60,7 +61,8 @@ export const expandMultipleMembersByRole = async (
 
           acc.push({
             ...specifiedDoctorInfo,
-            ...member._doc,
+            ...member,
+            // ...member._doc,
           });
         }
       }
@@ -69,13 +71,15 @@ export const expandMultipleMembersByRole = async (
       else {
         // ### → -> -> Add members without additional information to the accumulator, against their role <- <- <-
         acc.push({
-          ...member._doc,
+          // ...member._doc,
+          ...member,
         });
       }
     } else {
       // ### → -> -> Add nonExpanded member into the accumulator <- <- <-
       acc.push({
-        ...member._doc,
+        // ...member._doc,
+        ...member,
       });
     }
 

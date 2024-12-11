@@ -4,11 +4,13 @@ import multer from "multer";
 
 import upload from "../../middlewares/multer.js";
 
-import profileValidate from "../../libs/profile/validation.js";
-
 import { imageLimitToUpload } from "../../config/defaults.js";
 
+import profileValidate from "../../libs/profile/validation.js";
+
 import { create } from "../../api/v1/profile/controllers/index.js";
+
+import { authenticate } from "../../middlewares/index.js";
 
 const router = express.Router();
 
@@ -31,6 +33,7 @@ router.route("").post(
       next();
     }
   },
+  authenticate,
   create
 );
 

@@ -1,78 +1,78 @@
-import validate from "./validation.js";
-
-import doctorValidate, {
-  validateThrowError as doctorThrowError,
-} from "../doctor/validation.js";
+import { allowedForDoctor } from "../../config/defaults.js";
 
 import queryValidate from "../../utils/validation/query.js";
-
-import { allowedForDoctor } from "../../config/defaults.js";
 
 import { expandMultipleMembersByRole } from "../member/utils.js";
 
 const expandRole = async (formattedExpand = [], document = {} || []) => {
   // Validate the provided formatted expansion
-  if (!formattedExpand.length >= 1) {
-    doctorThrowError(
-      `The expand format must be a list of strings.`,
-      `Please, ensure the expandRole function is correctly called and try again`,
-      doctorValidate.getErrors(),
-      doctorValidate.clearErrors() // Clear errors for the next validation
+  if (!formattedExpand.length > 0) {
+    queryValidate.throwError(
+      `The expand format must include at least one object, containing both the path and select fields.`,
+      ``,
+      [
+        {
+          code: `INVALID_EXPAND_FORMAT`,
+          message: `Please, ensure the expandRole function is correctly called.`,
+          field: null,
+          location: null,
+          status: 400,
+        },
+      ]
     );
   }
 
   // ### → -> -> When the document format is an array <- <- <-
   if (Array.isArray(document)) {
-    // Check if the role property exists in at least one member
+    // Check and throw an error if the role property does not exist in at least one member
     const hasRole = document.some((member) => member?.role);
 
-    if (hasRole) {
-      // TODO: find all roles within the document and expand them accordingly
-
-      // Check for invalid selecting fields
-      return await Promise.all(
-        formattedExpand.map(async (item) => {
-          // When the path is equal to 'doctor'
-          if (item.path === `doctor`) {
-            queryValidate.select(
-              item.select.split(` `).join(`,`),
-              allowedForDoctor.selectFields
-            );
-
-            queryValidate.throwError(
-              `The doctor parameter is currently unable to select.`,
-              `Please, ensure all fields are correctly filled and try again`,
-              queryValidate.getErrors(),
-              queryValidate.clearErrors() // Clear errors for the next validation
-            );
-
-            // ### → -> -> Expand each member who have the 'doctor' role to include doctor information <- <- <-
-            return await expandMultipleMembersByRole(
-              document,
-              `doctor`,
-              item.select
-            );
-          } else if (item.path === `nurse`) {
-            // TODO: Implement later -> When the path is equal to 'nurse'
-          }
-        })
-      );
-    } else {
-      // throw an error if the role does not exist
-      validate.throwError(
-        ``,
-        `Please, ensure all fields are correctly filled and try again`,
+    if (!hasRole) {
+      queryValidate.throwError(
+        `Invalid selecting parameters`,
+        `Please, ensure that the 'role' field is currently selected`,
         [
           {
             code: `MISSING_MEMBER_ROLE`,
-            message: `The role property is required to expand the result.`,
-            field: `role`,
+            message: `The 'role' property is required to expand the result.`,
+            field: `select`,
             location: "query",
             status: 400,
           },
         ]
       );
     }
+
+    return await Promise.all(
+      formattedExpand.map(async (item) => {
+        // TODO: get all roles within the document and expand them accordingly
+
+        // ### → -> -> Expand each member who have the 'doctor' role to include doctor information <- <- <-
+        if (item.path === `doctor`) {
+          // Check for invalid selecting fields
+          queryValidate.select(
+            item.select.split(` `).join(`,`),
+            allowedForDoctor.selectFields
+          );
+
+          queryValidate.throwError(
+            `The doctor parameter is currently unable to select.`,
+            `Please, ensure all fields are correctly filled and try again`,
+            queryValidate.getErrors(),
+            queryValidate.clearErrors() // Clear errors for the next validation
+          );
+
+          // When the path is equal to 'doctor'
+          return await expandMultipleMembersByRole(
+            document,
+            `doctor`,
+            item.select
+          );
+        } else if (item.path === `nurse`) {
+          // TODO: Implement later -> When the path is equal to 'nurse'
+        }
+      })
+    );
   } else {
     // TODO: ### → -> -> Expand a single member based on their role to include additional information <- <- <-
     // {

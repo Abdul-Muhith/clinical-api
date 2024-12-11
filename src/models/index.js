@@ -1,9 +1,5 @@
-import Member from "./Member.js";
-import Doctor from "./Doctor.js";
-import Profile from "./Profile.js";
+export { default as MemberModel } from "./Member.js";
 
-export default {
-  Member,
-  Doctor,
-  Profile,
-};
+export { default as DoctorModel } from "./Doctor.js";
+
+export { default as ProfileModel } from "./Profile.js";

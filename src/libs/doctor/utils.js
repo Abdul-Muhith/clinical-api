@@ -1,26 +1,26 @@
-import models from "../../models/index.js";
+import { DoctorModel } from "../../models/index.js";
 
 import {
   dbFindDocumentByProperty,
   dbEntityExistsByProperty,
-} from "../../utils/db/index.js";
+} from "../../utils/index.js";
 
 export const findDoctorByProperty = async (key, value) => {
-  const doctor = await dbFindDocumentByProperty(models.Doctor, key, value);
+  const doctor = await dbFindDocumentByProperty(DoctorModel, key, value);
 
   return doctor ?? false;
 };
 
 export const checkDoctorExistsByMember = async (member) => {
-  return await dbEntityExistsByProperty(models.Doctor, `member`, member);
+  return await dbEntityExistsByProperty(DoctorModel, `member`, member);
 };
 
 export const checkDoctorExistsByTraceId = async (traceId) => {
-  return await dbEntityExistsByProperty(models.Doctor, `traceId`, traceId);
+  return await dbEntityExistsByProperty(DoctorModel, `traceId`, traceId);
 };
 
 export const checkDoctorExistsByProperty = async (key, value) => {
-  return await dbEntityExistsByProperty(models.Doctor, key, value);
+  return await dbEntityExistsByProperty(DoctorModel, key, value);
 };
 
 export default {

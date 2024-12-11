@@ -1,7 +1,8 @@
-import models from "../../models/index.js";
+import { MemberModel, ProfileModel } from "../../models/index.js";
 
 import defaultConfig, { allowedForMember } from "../../config/defaults.js";
-import { parse, generateFilterCriteria } from "../../utils/query/index.js";
+
+import { parse, generateFilterCriteria } from "../../utils/index.js";
 
 import { expandRole } from "./index.js";
 
@@ -43,7 +44,7 @@ const findAll = async ({
   sortOrder = defaultConfig.sortOrder,
   filter = defaultConfig.filter,
   search = defaultConfig.search,
-  search_term = defaultConfig.searchTerm,
+  searchTerm = defaultConfig.searchTerm,
   searchKey = defaultConfig.searchKeyForMember,
   expand = defaultConfig.expand,
   select = defaultConfig.select,
@@ -64,7 +65,7 @@ const findAll = async ({
   const filterCriteria = generateFilterCriteria(
     filter,
     search,
-    search_term,
+    searchTerm,
     searchKey,
     allowedForMember.filterFields,
     allowedForMember.searchFields
@@ -76,7 +77,7 @@ const findAll = async ({
     allowedForMember.selectFields
   );
 
-  const members = await models.Member.find(filterCriteria)
+  const members = await MemberModel.find(filterCriteria)
     // .sort(singleSortCriteria); // A string for sorting
     .sort(
       Object.keys(multipleSortCriteriaForDB).length > 0
@@ -85,29 +86,47 @@ const findAll = async ({
     ) // An object for sorting
     .select(selectCriteria);
 
-  // ### → -> -> Parse expanding parameters <- <- <-
-  const formattedExpand =
-    expand && parse.expandParameter(expand, allowedForMember.expandFields);
+  // ### → -> -> Retrieve profile details for each member and if found, include them in the relevant data <- <- <-
+  const membersWithProfiles = await Promise.all(
+    members.map(async (member) => {
+      const profile = await ProfileModel.findOne({ member: member._id });
 
-  // Expand the members based on the specified expansions
-  if (
-    members.some((member) => member) &&
-    formattedExpand &&
-    formattedExpand?.length > 0
-  ) {
-    const expandedCriteria = await expandRole(formattedExpand, members);
+      delete profile?._doc.__v;
+      delete profile?._doc._id;
+      delete profile?._doc.member;
+      delete profile?._doc.createdAt;
+      delete profile?._doc.updatedAt;
+
+      return {
+        ...member.toObject(),
+        ...profile?._doc,
+      };
+    })
+  );
+
+  // ### → -> -> Expand the members based on the specified expansions <- <- <-
+  if (membersWithProfiles.some((member) => member) && expand) {
+    // Parse expanding parameters
+    const formattedExpand = parse.expandParameter(
+      expand,
+      allowedForMember.expandFields
+    );
+
+    const expandedCriteria =
+      formattedExpand?.length > 0 &&
+      (await expandRole(formattedExpand, membersWithProfiles));
 
     if (expandedCriteria) {
       return {
-        totalItems: members.length,
+        totalItems: membersWithProfiles.length,
         members: expandedCriteria[0].slice(page * size - size, page * size), // Skip and limit to 'size' items
       };
     }
   }
 
   return {
-    totalItems: members.length,
-    members: members.slice(page * size - size, page * size), // Skip and limit to 'size' items
+    totalItems: membersWithProfiles.length,
+    members: membersWithProfiles.slice(page * size - size, page * size), // Skip and limit to 'size' items
   };
 };
 

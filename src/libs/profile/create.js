@@ -1,6 +1,6 @@
-import models from "../../models/index.js";
+import { ProfileModel } from "../../models/index.js";
 import profileValidate from "./validation.js";
-import { dbCreateDocument } from "../../utils/db/index.js";
+import { dbCreateDocument } from "../../utils/index.js";
 
 import {
   cloudinaryDirectoryToUploadProfilePhoto,
@@ -80,7 +80,7 @@ const create = async ({ member, gender, age, bloodGroup, photo, address }) => {
     };
   }
 
-  const newProfile = await dbCreateDocument(models.Profile, profilePayload);
+  const newProfile = await dbCreateDocument(ProfileModel, profilePayload);
 
   // ### → -> -> Return necessary responses <- <- <-
   return { getProfile: newProfile };

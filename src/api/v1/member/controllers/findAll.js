@@ -4,9 +4,11 @@ import defaultConfig, {
 
 import { findAll } from "../../../../libs/member/index.js";
 
-import { getTransformedItems } from "../../../../utils/index.js";
-
-import { getPagination, getHATEOAS } from "../../../../utils/query/index.js";
+import {
+  getTransformedItems,
+  getPagination,
+  getHATEOAS,
+} from "../../../../utils/index.js";
 
 /**
  * This function extracts query parameters from the request, invokes a service to retrieve a list of members, and then generates and returns a structured response with the list of members, pagination, and HATEOAS links.
@@ -21,31 +23,17 @@ import { getPagination, getHATEOAS } from "../../../../utils/query/index.js";
  */
 
 const findAllMembers = async (req, res, next) => {
-  // ### → -> -> Validate query parameters <- <- <-
-  let {
-    page,
-    size,
-    sort,
-    sortBy,
-    sortOrder,
-    filter,
-    search,
-    search_term,
-    expand,
-    select,
-  } = req.query;
-
-  // Set default values for query parameters
-  page = +req.query.page || defaultConfig.page;
-  size = +req.query.size || defaultConfig.size;
-  sort = req.query.sort || defaultConfig.sort;
-  sortBy = req.query.sort_by || defaultConfig.sortBy;
-  sortOrder = req.query.sort_order || defaultConfig.sortOrder;
-  filter = req.query.filter || defaultConfig.filter;
-  search = req.query.search || defaultConfig.search;
-  search_term = req.query.search_term || defaultConfig.searchTerm;
-  expand = req.query.expand || defaultConfig.expand;
-  select = req.query.select || defaultConfig.select;
+  // ### → -> -> Validate query parameters and set default values <- <- <-
+  let page = +req.query.page || defaultConfig.page;
+  let size = +req.query.size || defaultConfig.size;
+  let sort = req.query.sort || defaultConfig.sort;
+  let sortBy = req.query.sort_by || defaultConfig.sortBy;
+  let sortOrder = req.query.sort_order || defaultConfig.sortOrder;
+  let filter = req.query.filter || defaultConfig.filter;
+  let search = req.query.search || defaultConfig.search;
+  let searchTerm = req.query.search_term || defaultConfig.searchTerm;
+  let expand = req.query.expand || defaultConfig.expand;
+  let select = req.query.select || defaultConfig.select;
 
   try {
     // ### → -> -> Invoke the service function to fetch all members <- <- <-
@@ -57,7 +45,7 @@ const findAllMembers = async (req, res, next) => {
       sortOrder,
       filter,
       search,
-      search_term,
+      searchTerm,
       expand,
       select,
     });
@@ -78,7 +66,7 @@ const findAllMembers = async (req, res, next) => {
 
     const data = getTransformedItems(
       members,
-      allowedForMember.expandedFieldsToResponse, // Array to generate a serial sequence, field by field
+      allowedForMember.fieldsToResponse, // Array to generate a serial sequence, field by field
       getUrl.split("?")[0]
     );
 
